@@ -50,7 +50,7 @@ jobs: # A workflow run is made up of one or more jobs that can run sequentially 
       - name: Install golang-migrate
         run: |
           curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz | tar xvz
-          sudo mv migrate.linux-amd64 /usr/bin/migrate
+          sudo mv migrate /usr/bin/migrate
           which migrate
 
       # Run migration.
