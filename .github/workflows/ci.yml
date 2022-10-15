@@ -25,6 +25,8 @@ jobs: # A workflow run is made up of one or more jobs that can run sequentially 
           POSTGRES_USER: root
           POSTGRES_PASSWORD: aA@123123
           POSTGRES_DB: sample_bank_db
+        ports:
+          - 5432:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
