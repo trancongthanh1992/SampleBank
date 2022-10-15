@@ -1,0 +1,35 @@
+name: ci-test
+
+## Define trigger to workflow.
+# Controls when the workflow will run. `on` is a list of trigger event.
+on:
+  push: # Triggers the workflow on push request events but only for the "develop" branch
+    branches: [ "develop" ]
+  pull_request: # Triggers the workflow on pull request events but only for the "master" branch
+    branches: [ "master" ]
+
+## Define job for workflow.
+jobs: # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  # This workflow contains a single job called "build"
+  build:
+    name: Test
+    runs-on: ubuntu-latest # The type of runner that the job will run on
+
+    steps: # Steps represent a sequence of tasks that will be executed as part of the job
+      
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3 
+
+      # Download Golang version
+      - name: Setup Go 1.x
+        uses: actions/setup-go@v3
+        with:
+          go-version: ^1.19
+        id: go # define unique identifier like as alias name.
+
+      - name: Build Go
+        run: go build -v .
+
+      - name: Test
+        run: make test
