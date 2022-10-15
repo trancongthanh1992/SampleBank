@@ -15,6 +15,24 @@ jobs: # A workflow run is made up of one or more jobs that can run sequentially 
     name: Test
     runs-on: ubuntu-latest # The type of runner that the job will run on
 
+
+    services: # Service containers to run with `container-job`
+      postgres: # Label used to access the service container
+        # Docker Hub image
+        image: postgres:14.4-alpine
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: aA@123123
+          POSTGRES_DB: sample_bank_db
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+
     steps: # Steps represent a sequence of tasks that will be executed as part of the job
       
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -28,8 +46,16 @@ jobs: # A workflow run is made up of one or more jobs that can run sequentially 
           go-version: ^1.19
         id: go # define unique identifier like as alias name.
 
-      - name: Build Go
-        run: go build -v .
+      # Download migration from `url` and coping into server of `Github Action`
+      - name: Install golang-migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.12.2/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate.linux-amd64 /usr/bin/migrate
+          which migrate
+
+      # Run migration.
+      - name: Run migrations
+        run: make migrateup
 
       - name: Test
         run: make test
